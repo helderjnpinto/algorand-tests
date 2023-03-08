@@ -6,32 +6,17 @@ from algosdk.transaction import ApplicationCreateTxn
 from algosdk import transaction
 from pyteal import *
 
-print('\033[91m'+' Deploying: ' + '\033[92m', "payari_teal")
-
-
-def approval_program():
-    return Return(Int(1))
-
 
 def clear_program():
     return Return(Int(1))
 
 
-def approval_program_bytes():
-    teal_program = compileTeal(clear_program(), Mode.Application, version=5)
-    teal_program_base64 = algod_client.compile(teal_program)["result"]
-    return_data_bytes = encoding.base64.b64decode(teal_program_base64)
-
-    return return_data_bytes
-
-
 def clear_program_bytes():
-    teal_program = compileTeal(clear_program(), Mode.Application, version=5)
+    teal_program = compileTeal(clear_program(), Mode.Application, version=7)
     teal_program_base64 = algod_client.compile(teal_program)["result"]
     return_data_bytes = encoding.base64.b64decode(teal_program_base64)
 
     return return_data_bytes
-
 
 
 def contract_contents_to_base64(source_code):
@@ -51,13 +36,14 @@ def deploy(contract_name, sender_address=DEPLOYER_ADDRESS, sender_private_key=DE
 
 
     # create tx payload
+    # https://py-algorand-sdk.readthedocs.io/en/latest/algosdk/transaction.html?highlight=ApplicationCreateTxn#algosdk.transaction.ApplicationCreateTxn
     txn = ApplicationCreateTxn(
         sp=suggested,
         sender=sender_address,
-        approval_program=approval_program_bytes(),
+        approval_program=base64_program,
         clear_program=clear_program_bytes(),
-        global_schema=transaction.StateSchema(num_uints=0, num_byte_slices=0),
-        local_schema=transaction.StateSchema(num_uints=0, num_byte_slices=0),
+        global_schema=transaction.StateSchema(1,0),
+        local_schema=transaction.StateSchema(0,0),
         on_complete=transaction.OnComplete.NoOpOC,
         app_args=[]
     )

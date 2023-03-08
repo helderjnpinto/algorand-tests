@@ -1,5 +1,6 @@
 import os
 from utils.compile import compile_contracts
+from pyteal import *
 
 
 def get_contracts_list(relative_path):
@@ -40,7 +41,8 @@ def load_teal_file_by_name(teal_file):
 def load_contract(contract_name, force_compile=True):
     tealish_list, _ = get_tealish_list()
     teal_list, _ = get_teal_list()
-
+    
+    # check changes in contracts folders
     if (force_compile or len(tealish_list) != len(teal_list)):
         run_compile()
         teal_list, _ = get_teal_list()
@@ -52,3 +54,12 @@ def load_contract(contract_name, force_compile=True):
         return load_teal_file_by_name(filtered_list[0])
     else:
         raise ValueError("Contract name not found.")
+
+
+def get_abi(contract_name):
+    source_code = load_contract(contract_name)
+    teal_code = """
+    #pragma version 3
+    int 0
+    """
+    return compileTeal(teal_code, Mode.Application)
