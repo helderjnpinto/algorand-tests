@@ -1,13 +1,5 @@
 import os
-import subprocess
-
-# compiled
-compiled_contracts_path = '../contracts/tealish/build/'
-compiled_contracts_path = os.path.join(script_dir, compiled_contracts_path)
-compiled_files_and_dirs = os.listdir(contracts_path)
-compiled_file_list = [f for f in files_and_dirs if os.path.isfile(
-    os.path.join(contracts_path, f))]
-
+from compile import compile_contracts 
 
 def get_contracts_list(relative_path):
     script_dir = os.path.dirname(__file__)
@@ -25,22 +17,27 @@ def get_contracts_list(relative_path):
 
 
 def get_tealish_list():
-    get_contracts_list('../contracts/tealish/')
+    return get_contracts_list('../contracts/')
 
 
 def get_teal_list():
-    get_contracts_list('../contracts/tealish/build/')
+    return get_contracts_list('../contracts/build/')
 
 
-def compile_contracts():
-    script_path = "utils/compile.py"
-    subprocess.run(["python3", script_path])
+def run_compile():
+    file_list, complete_file_list = get_tealish_list()
+    return compile_contracts(file_list, complete_file_list)
 
 
 def load_contract(contract_name):
-    print(file_list)
-    # compile_contracts()
-    filtered_list = list(filter(lambda x: x == contract_name, file_list))
+    tealish_list, _ = get_tealish_list()
+    teal_list, _ = get_teal_list()
+    
+    if (len(tealish_list) != len(teal_list)):
+        run_compile()
+        teal_list, _ = get_teal_list()
+
+    filtered_list = list(filter(lambda x: x == contract_name + ".teal", teal_list))
 
     if len(filtered_list) == 1:
         return filtered_list[0]
