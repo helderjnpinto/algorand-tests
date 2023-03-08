@@ -1,9 +1,10 @@
 import subprocess
+from pyteal import *
 
 
 def compile_contracts(file_list, complete_file_list):
     compile_results = []
-    
+
     for index, contractPath in enumerate(complete_file_list):
         print('\n\t (info) compile: %s ' % file_list[index])
 

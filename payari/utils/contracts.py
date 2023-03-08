@@ -1,5 +1,6 @@
 import os
-from compile import compile_contracts 
+from utils.compile import compile_contracts
+
 
 def get_contracts_list(relative_path):
     script_dir = os.path.dirname(__file__)
@@ -29,17 +30,25 @@ def run_compile():
     return compile_contracts(file_list, complete_file_list)
 
 
-def load_contract(contract_name):
+def load_teal_file_by_name(teal_file):
+    script_dir = os.path.dirname(__file__)
+    contract_path = os.path.join(script_dir, "../contracts/build/" + teal_file)
+    file = open(contract_path, "r")
+    return file.read()
+
+
+def load_contract(contract_name, force_compile=True):
     tealish_list, _ = get_tealish_list()
     teal_list, _ = get_teal_list()
-    
-    if (len(tealish_list) != len(teal_list)):
+
+    if (force_compile or len(tealish_list) != len(teal_list)):
         run_compile()
         teal_list, _ = get_teal_list()
 
-    filtered_list = list(filter(lambda x: x == contract_name + ".teal", teal_list))
+    filtered_list = list(
+        filter(lambda x: x == contract_name + ".teal", teal_list))
 
     if len(filtered_list) == 1:
-        return filtered_list[0]
+        return load_teal_file_by_name(filtered_list[0])
     else:
         raise ValueError("Contract name not found.")
