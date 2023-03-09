@@ -20,11 +20,13 @@ def clear_program_bytes():
 
 
 def contract_contents_to_base64(source_code):
-    compiled_bytes = algod_client.compile(source_code)
+    compiled_bytes = algod_client.compile(source_code, True)
+    # print('\033[91m'+'compiled_bytes: ' + '\033[92m', compiled_bytes)
     base64_program = encoding.base64.b64decode(compiled_bytes["result"])
     return (base64_program, compiled_bytes)
 
 
+#TODO: PASS GLOBAL SCHEMA AND LOCAL SCHEMA
 def deploy(contract_name, sender_address=DEPLOYER_ADDRESS, sender_private_key=DEPLOYER_PK):
     source_code = load_contract(contract_name)
     base64_program, _ = contract_contents_to_base64(source_code)
@@ -33,7 +35,6 @@ def deploy(contract_name, sender_address=DEPLOYER_ADDRESS, sender_private_key=DE
     suggested = algod_client.suggested_params()
     suggested.flat_fee = True
     suggested.fee = 1_000
-
 
     # create tx payload
     # https://py-algorand-sdk.readthedocs.io/en/latest/algosdk/transaction.html?highlight=ApplicationCreateTxn#algosdk.transaction.ApplicationCreateTxn

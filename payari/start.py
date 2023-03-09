@@ -10,3 +10,4 @@ from utils.applications import get_app_info, get_app_global_state
 
 abi = get_abi("payari")
 print('\033[91m'+'abi: ' + '\033[92m', abi)
+ 

@@ -1,0 +1,4 @@
+#pragma version 7
+txn ApplicationID
+int 0
+==
