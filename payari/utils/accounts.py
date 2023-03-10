@@ -1,5 +1,6 @@
 from algosdk import v2client, account, mnemonic
 from utils.config import algod_client, SENDER_ADDRESS, SENDER_MNEMONIC
+import requests
 
 # TODO: create fn generate accounts
 # private_key, address = account.generate_account()
@@ -26,3 +27,4 @@ DEPLOYER_ADDRESS=addr
 
 
 ZERO_ADDRESS = b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+

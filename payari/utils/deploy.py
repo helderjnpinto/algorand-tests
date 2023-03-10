@@ -1,6 +1,7 @@
 from utils.contracts import load_contract
 from utils.config import algod_client
 from utils.accounts import DEPLOYER_ADDRESS, DEPLOYER_PK
+from utils.transactions import get_app_id_from_deploy_tx
 from algosdk import encoding
 from algosdk.transaction import ApplicationCreateTxn
 from algosdk import transaction
@@ -53,19 +54,15 @@ def deploy(contract_name, sender_address=DEPLOYER_ADDRESS, sender_private_key=DE
     signed_txn = txn.sign(sender_private_key)
 
     #  send tx
-    txid = algod_client.send_transaction(signed_txn)
+    txId = algod_client.send_transaction(signed_txn)
     print('\033[91m contract: ' + contract_name +
-          ' with txid: ' + '\033[92m', contract_name, txid)
+          ' with txId: ' + '\033[92m', contract_name, txId)
     
-    # wait for it
-    transaction_response = None
-    while transaction_response is None:
-        transaction_response = algod_client.pending_transaction_info(txid)
+    app_id, transaction_response = get_app_id_from_deploy_tx(txId)
 
-    app_id = transaction_response["application-index"]
     print('\033[91m contract: ' + contract_name +
           'app_id: ' + '\033[92m', app_id)
 
-    return (app_id, txid)
+    return (app_id, transaction_response, txId)
 
 

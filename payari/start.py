@@ -1,13 +1,6 @@
-from utils.deploy import deploy
-from utils.contracts import get_abi
-from utils.applications import get_app_info, get_app_global_state
-
-# app_id, _ = deploy("payari")
-
-# info = get_app_info(app_id)
-# app_global_state = get_app_global_state(app_id)
+from utils.faucet import dispense
 
 
-abi = get_abi("payari")
-print('\033[91m'+'abi: ' + '\033[92m', abi)
- 
+
+dispense_tx = dispense("MH5IDGBKUC2GB6OJ6WKFW6KQA7E55MHBKEYJMZ64OYTI5VJXNMCEWEGHGM", 1_000_000)
+print('\033[91m'+'dispense_tx: ' + '\033[92m', dispense_tx)

@@ -1,9 +1,9 @@
 from utils.config import algod_client
-from utils.accounts import DEPLOYER_PK
+from utils.accounts import DEPLOYER_PK, DEPLOYER_ADDRESS
 from algosdk import transaction
 
 
-def transfer(sender_pk=DEPLOYER_PK, amount=1_000_000, to_address=""):
+def transfer(sender_pk=DEPLOYER_PK, sender=DEPLOYER_ADDRESS, amount=1_000_000, to_address=""):
     params = algod_client.suggested_params()
     txn = transaction.PaymentTxn(sender, params, to_address, amount)
     signed_txn = txn.sign(sender_pk)
@@ -20,41 +20,59 @@ def transfer(sender_pk=DEPLOYER_PK, amount=1_000_000, to_address=""):
     return transaction_response
 
 
+def getSP():
+    suggested = algod_client.suggested_params()
+    suggested.flat_fee = True
+    suggested.fee = 1_000
+    return suggested
 
-# TODO: delete app fn
-# Delete the app
-# txn = transaction.ApplicationDeleteTxn(
-#     sender=account1,
-#     sp=params,
-#     index=app_id,
-# )
-#
-# signed_txn = txn.sign(account1_sk)
-# txid = algod_client.send_transaction(signed_txn)
-# print("Transaction ID: {}".format(txid))
-#
-# # Wait for wait_for_confirmation
-# wait_for_confirmation(algod_client, txid)
-#
-#
 
-# TODO: call application
-# for i in range(1, 12):
-#     params = algod_client.suggested_params()
-#     params.flat_fee = True
-#     params.fee = 1_000
+def call_application_noop_tx(app_id = 0, app_args = [], sender_pk=DEPLOYER_PK, sender_address=DEPLOYER_ADDRESS):
+    txn = transaction.ApplicationNoOpTxn(
+        sp=getSP(),
+        sender=sender_address,
+        index=app_id,
+        app_args=app_args)
+    
+    signed_txn = txn.sign(sender_pk)
+    print('\033[91m'+'signed_txn: ' + '\033[92m', signed_txn)
+    txHash = algod_client.send_transaction(signed_txn)
+    print('\033[91m'+'Transaction hash: ' + '\033[92m', txHash)
+    confirmed_txn = algod_client.pending_transaction_info(txHash)
+    print('\033[91m'+'confirmed_txn: ' + '\033[92m', confirmed_txn)
 
-# # ApplicationCallTxn(sender, sp, index, on_complete, local_schema=None, global_schema=None,
-# # approval_program=None, clear_program=None, app_args=None,
-# # accounts=None, foreign_apps=None, foreign_assets=None,
-# # note=None, lease=None, rekey_to=None, extra_pages=0, boxes=None)
-#     txn = transaction.ApplicationCallTxn(
-#         sender=sender,
-#         sp=params,
-#         index=app_id,
-#         on_complete=transaction.OnComplete.NoOpOC,
-#     )
-#     signed_txn = txn.sign(sender_pk)
-#     txid = algod_client.send_transaction(signed_txn)
-#     print("Transaction ID: {}".format(txid))
-#     transaction.wait_for_confirmation(algod_client, txid)
+    while not confirmed_txn.get("confirmed-round"):
+        confirmed_txn = algod_client.pending_transaction_info(txHash)
+    
+    return confirmed_txn
+
+
+def delete_application(app_id = 0, sender_pk=DEPLOYER_PK, sender_address=DEPLOYER_ADDRESS):
+    txn = transaction.ApplicationDeleteTxn(
+               sp=getSP(),
+        sender=sender_address,
+        index=app_id,
+    )
+
+    signed_txn = txn.sign(sender_pk)
+    txHash = algod_client.send_transaction(signed_txn)
+    print('\033[91m'+'txHash: ' + '\033[92m', txHash)
+
+    confirmed_txn = algod_client.pending_transaction_info(txHash)
+    print('\033[91m'+'delete confirmed_txn: ' + '\033[92m', confirmed_txn)
+
+    while not confirmed_txn.get("confirmed-round"):
+        confirmed_txn = algod_client.pending_transaction_info(txHash)
+    
+    return confirmed_txn
+
+
+def get_app_id_from_deploy_tx(txId):
+    transaction_response = None
+    while transaction_response is None:
+        transaction_response = algod_client.pending_transaction_info(txId)
+    
+    app_id = transaction_response.get("application-index")
+
+    return (app_id, transaction_response)
+

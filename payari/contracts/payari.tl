@@ -35,23 +35,22 @@ end
 
 block main:
     switch Txn.ApplicationArgs[0]:
-        "method_a": method_a
-        "method_b": method_b
-        "method_c": method_c
+        "add": add
     end
 
-    block method_a:
+    block add:
         # some statements here
+        int return_value = method_add()
+        log(concat("add return value logx %i", itob(return_value)))
         exit(1)
     end
 
-    block method_b:
-        # some statements here
-        exit(1)
-    end
-
-    block method_c:
-        # some statements here
-        exit(1)
-    end
 end
+
+
+func method_add() int:
+    int arg1 = btoi(Txn.ApplicationArgs[1])
+    int arg2 = btoi(Txn.ApplicationArgs[2])
+    return arg1 + arg2
+end
+

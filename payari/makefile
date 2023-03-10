@@ -17,4 +17,4 @@ push:  ## Push code with tags
 	git push && git push --tags
 
 test:  ## Run tests
-	pytest -ra
+	python3 -m pytest -s ./test/test_1_payari_state.py 
