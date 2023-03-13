@@ -1,17 +1,28 @@
-# Static analyzer
+# Development
 
-- https://github.com/crytic/tealer
+```bash
+algokit localnet start
+```
 
-# Testing
+> Setup envs in .env.example to .env with sandbox accounts and tokens.
 
-- https://github.com/algorand/graviton
 
-# Dev contracts
+## Dev contracts
 
 ```bash
 watchexec -w ./contracts 'tealish compile ./contracts/payari.tl'
-
-watchexec -w ./test 'make test'
-
 ```
+
+
+## Testing
+
+```bash
+watchexec -w ./test 'make test'
+```
+
+
+## Static analyzer
+
+TODO: check tealer tool
+- https://github.com/crytic/tealer
 
