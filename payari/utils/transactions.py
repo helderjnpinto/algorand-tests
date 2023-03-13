@@ -3,9 +3,9 @@ from utils.accounts import DEPLOYER_PK, DEPLOYER_ADDRESS
 from algosdk import transaction
 
 
-def transfer(sender_pk=DEPLOYER_PK, sender=DEPLOYER_ADDRESS, amount=1_000_000, to_address=""):
+def transfer(sender_pk=DEPLOYER_PK, sender=DEPLOYER_ADDRESS, receiver_address="", amount=1_000_000):
     params = algod_client.suggested_params()
-    txn = transaction.PaymentTxn(sender, params, to_address, amount)
+    txn = transaction.PaymentTxn(sender, params, receiver_address, amount)
     signed_txn = txn.sign(sender_pk)
     txid = algod_client.send_transaction(signed_txn)
     print('\033[91m'+'txid: ' + '\033[92m', txid)
@@ -20,20 +20,20 @@ def transfer(sender_pk=DEPLOYER_PK, sender=DEPLOYER_ADDRESS, amount=1_000_000, t
     return transaction_response
 
 
-def getSP():
+def get_sp():
     suggested = algod_client.suggested_params()
     suggested.flat_fee = True
     suggested.fee = 1_000
     return suggested
 
 
-def call_application_noop_tx(app_id = 0, app_args = [], sender_pk=DEPLOYER_PK, sender_address=DEPLOYER_ADDRESS):
+def call_application_noop_tx(app_id=0, app_args=[], sender_pk=DEPLOYER_PK, sender_address=DEPLOYER_ADDRESS):
     txn = transaction.ApplicationNoOpTxn(
-        sp=getSP(),
+        sp=get_sp(),
         sender=sender_address,
         index=app_id,
         app_args=app_args)
-    
+
     signed_txn = txn.sign(sender_pk)
     print('\033[91m'+'signed_txn: ' + '\033[92m', signed_txn)
     txHash = algod_client.send_transaction(signed_txn)
@@ -43,13 +43,13 @@ def call_application_noop_tx(app_id = 0, app_args = [], sender_pk=DEPLOYER_PK, s
 
     while not confirmed_txn.get("confirmed-round"):
         confirmed_txn = algod_client.pending_transaction_info(txHash)
-    
+
     return confirmed_txn
 
 
-def delete_application(app_id = 0, sender_pk=DEPLOYER_PK, sender_address=DEPLOYER_ADDRESS):
+def delete_application(app_id=0, sender_pk=DEPLOYER_PK, sender_address=DEPLOYER_ADDRESS):
     txn = transaction.ApplicationDeleteTxn(
-               sp=getSP(),
+        sp=get_sp(),
         sender=sender_address,
         index=app_id,
     )
@@ -63,7 +63,7 @@ def delete_application(app_id = 0, sender_pk=DEPLOYER_PK, sender_address=DEPLOYE
 
     while not confirmed_txn.get("confirmed-round"):
         confirmed_txn = algod_client.pending_transaction_info(txHash)
-    
+
     return confirmed_txn
 
 
@@ -71,8 +71,7 @@ def get_app_id_from_deploy_tx(txId):
     transaction_response = None
     while transaction_response is None:
         transaction_response = algod_client.pending_transaction_info(txId)
-    
+
     app_id = transaction_response.get("application-index")
 
     return (app_id, transaction_response)
-

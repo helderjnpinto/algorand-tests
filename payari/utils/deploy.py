@@ -27,7 +27,7 @@ def contract_contents_to_base64(source_code):
     return (base64_program, compiled_bytes)
 
 
-#TODO: PASS GLOBAL SCHEMA AND LOCAL SCHEMA
+# TODO: PASS GLOBAL SCHEMA AND LOCAL SCHEMA
 def deploy(contract_name, sender_address=DEPLOYER_ADDRESS, sender_private_key=DEPLOYER_PK):
     source_code = load_contract(contract_name)
     base64_program, _ = contract_contents_to_base64(source_code)
@@ -44,8 +44,8 @@ def deploy(contract_name, sender_address=DEPLOYER_ADDRESS, sender_private_key=DE
         sender=sender_address,
         approval_program=base64_program,
         clear_program=clear_program_bytes(),
-        global_schema=transaction.StateSchema(1,0),
-        local_schema=transaction.StateSchema(0,0),
+        global_schema=transaction.StateSchema(1, 0),
+        local_schema=transaction.StateSchema(0, 0),
         on_complete=transaction.OnComplete.NoOpOC,
         app_args=[]
     )
@@ -57,12 +57,10 @@ def deploy(contract_name, sender_address=DEPLOYER_ADDRESS, sender_private_key=DE
     txId = algod_client.send_transaction(signed_txn)
     print('\033[91m contract: ' + contract_name +
           ' with txId: ' + '\033[92m', contract_name, txId)
-    
+
     app_id, transaction_response = get_app_id_from_deploy_tx(txId)
 
     print('\033[91m contract: ' + contract_name +
           'app_id: ' + '\033[92m', app_id)
 
     return (app_id, transaction_response, txId)
-
-

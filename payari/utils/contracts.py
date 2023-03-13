@@ -41,7 +41,7 @@ def load_teal_file_by_name(teal_file):
 def load_contract(contract_name, force_compile=True):
     tealish_list, _ = get_tealish_list()
     teal_list, _ = get_teal_list()
-    
+
     # check changes in contracts folders
     if (force_compile or len(tealish_list) != len(teal_list)):
         run_compile()

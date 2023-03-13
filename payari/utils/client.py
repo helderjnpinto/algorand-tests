@@ -27,11 +27,10 @@ def get_dispenser_account_from_kmd():
     wallet_handle_token = kmd_client.init_wallet_handle(wallet_id, "")
     addresses = kmd_client.list_keys(wallet_handle_token)
 
-    if (len(addresses) > 0 ):
-        address = addresses[0];
+    if (len(addresses) > 0):
+        address = addresses[0]
         private_key = kmd_client.export_key(wallet_handle_token, "", address)
         return (private_key, address)
     else:
         print("Load kmd accounts not found any address")
         exit(1)
-

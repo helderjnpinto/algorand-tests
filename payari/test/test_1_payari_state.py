@@ -32,21 +32,17 @@ def deploy_contacts():
     print('\033[91m'+'delete app result: ' + '\033[92m', result)
 
 
-
 def print_logs(log):
     if b'%i' in log:
         i = log.index(b'%i')
-        print('\033[91m'+'i: ' + '\033[92m', i)
         s = log[0:i].decode()
-        print('\033[91m'+'s: ' + '\033[92m', s)
         value = int.from_bytes(log[i + 2:], 'big')
-        print('\033[91m'+'value: ' + '\033[92m', value)
-        print(f'Log: {s}: {value}')
+        return (s,value)
     else:
-        print(f'<<<< Log: {log}')
+        return (None, None)
 
 
-def test_contract_methods(deploy_contacts):
+def test_contract_methods_log(deploy_contacts):
     app_id, algod_client = deploy_contacts
 
     # Test the contract's `add` method
@@ -55,14 +51,8 @@ def test_contract_methods(deploy_contacts):
     print('\033[91m'+'receipt: ' + '\033[92m', receipt)
 
     logs = receipt['logs'][0]
-    print_logs(base64.b64decode(logs))
-
-    log = receipt['logs'][0]
-    print('\033[91m'+'test log: ' + '\033[92m', log)
-    byt = base64.b64decode(log)[-8:]
-    print('\033[91m'+'byt: ' + '\033[92m', byt)
-    dec = int.from_bytes(byt, 'big')
-    print('\033[91m'+'dec: ' + '\033[92m', dec)
+    string_value, parsed_integer = print_logs(base64.b64decode(logs))
+    print('\033[91m'+'string_value: ' + '\033[92m', string_value, parsed_integer)
 
     # msg1 = base64.b64decode("FR98dQAAAAAAAASD")[4:]
     # print('\033[91m'+'msg1: ' + '\033[92m', msg1)
@@ -73,13 +63,15 @@ def test_contract_methods(deploy_contacts):
     # print('\033[91m'+'>>>>>>>>>>>>>>>>> log: ' + '\033[92m', log)
     
     # codec = ABIType.from_string("string")
-
     # logBase64 = base64.b64decode(log)[4:]
     # print('\033[91m'+'logBase64: ' + '\033[92m', logBase64)
     # out = codec.decode(logBase64)
     # print('\033[91m'+'>>>>>>>>>>>>>>>>> out: ' + '\033[92m', out)
+    compiled_log = string_value + "%i " + str(parsed_integer)
 
-    assert receipt['logs'][0] == 'YWRkIHJldHVybiB2YWx1ZSAlaQAAAAAAYWRu'
+    assert compiled_log == "add return value logx %i 30"
+
+    assert receipt['logs'][0] == 'YWRkIHJldHVybiB2YWx1ZSBsb2d4ICVpAAAAAAAAAB4='
     # global_state = algod_client.application_state(contract_address).get("result").get("global-state")
     # assert global_state[0].get("value").get("uint") == 30
     assert True

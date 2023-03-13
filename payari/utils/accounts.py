@@ -7,24 +7,20 @@ import requests
 
 
 # Get account address from mnemonic
-sk = mnemonic.to_private_key(SENDER_MNEMONIC)
-addr = account.address_from_private_key(sk)
+sender_mnemonic = mnemonic.to_private_key(SENDER_MNEMONIC)
+sender_address = account.address_from_private_key(sender_mnemonic)
 
-if addr != SENDER_ADDRESS:
+if sender_address != SENDER_ADDRESS:
     print("ENV FOR sender address is not equal to imported mnemonic")
     exit(1)
 
 # Get current blockchain balance of account
-account_info = algod_client.account_info(addr)
+account_info = algod_client.account_info(sender_address)
 balance = account_info.get("amount")
+print("Default sender address:", sender_address, " balance:", balance)
 
-# Print address and balance
-print("Address:", addr)
-print("Balance:", balance)
+DEPLOYER_PK = sender_mnemonic
+DEPLOYER_ADDRESS = sender_address
 
-DEPLOYER_PK=sk
-DEPLOYER_ADDRESS=addr
-
-
+# UTILS
 ZERO_ADDRESS = b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-

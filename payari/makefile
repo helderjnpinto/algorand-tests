@@ -17,4 +17,7 @@ push:  ## Push code with tags
 	git push && git push --tags
 
 test:  ## Run tests
-	python3 -m pytest -s ./test/test_1_payari_state.py 
+	python3 -m pytest -s ./test
+
+specific_test:  ## Run only one test
+	python3 -m pytest -s ./test/test_2_create_asa_token.py
