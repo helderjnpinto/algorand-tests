@@ -1,9 +1,9 @@
 from utils.config import algod_client
-from utils.accounts import DEPLOYER_PK, DEPLOYER_ADDRESS
+from utils.accounts import deployer_address, deployer_private_key
 from algosdk import transaction
 
 
-def transfer(sender_pk=DEPLOYER_PK, sender=DEPLOYER_ADDRESS, receiver_address="", amount=1_000_000):
+def transfer(sender_pk=deployer_private_key, sender=deployer_address, receiver_address="", amount=1_000_000):
     params = algod_client.suggested_params()
     txn = transaction.PaymentTxn(sender, params, receiver_address, amount)
     signed_txn = txn.sign(sender_pk)
@@ -27,7 +27,7 @@ def get_sp():
     return suggested
 
 
-def call_application_noop_tx(app_id=0, app_args=[], sender_pk=DEPLOYER_PK, sender_address=DEPLOYER_ADDRESS):
+def call_application_noop_tx(app_id=0, app_args=[], sender_pk=deployer_private_key, sender_address=deployer_address):
     txn = transaction.ApplicationNoOpTxn(
         sp=get_sp(),
         sender=sender_address,
@@ -47,7 +47,7 @@ def call_application_noop_tx(app_id=0, app_args=[], sender_pk=DEPLOYER_PK, sende
     return confirmed_txn
 
 
-def delete_application(app_id=0, sender_pk=DEPLOYER_PK, sender_address=DEPLOYER_ADDRESS):
+def delete_application(app_id=0, sender_pk=deployer_private_key, sender_address=deployer_address):
     txn = transaction.ApplicationDeleteTxn(
         sp=get_sp(),
         sender=sender_address,
