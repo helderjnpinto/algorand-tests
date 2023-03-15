@@ -6,8 +6,15 @@ load_dotenv()
 
 # Set up Algod client
 ALGOD_TOKEN = os.getenv('ALGOD_TOKEN')
+print('\033[91m'+'ALGOD_TOKEN: ' + '\033[92m', ALGOD_TOKEN)
 ALGOD_ADDR = os.getenv('ALGOD_ADDR')
-algod_client = v2client.algod.AlgodClient(ALGOD_TOKEN, ALGOD_ADDR)
+print('\033[91m'+'ALGOD_ADDR: ' + '\033[92m', ALGOD_ADDR)
+
+headers = {
+   "X-API-Key": ALGOD_TOKEN,
+}
+
+algod_client = v2client.algod.AlgodClient(ALGOD_TOKEN, ALGOD_ADDR, headers)
 
 try:
     algod_client.status()

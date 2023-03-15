@@ -14,22 +14,23 @@ sys.path.append("..")
 # Define a fixture to deploy a contract
 @pytest.fixture(scope="module")
 def deploy_contacts():
-    app_id, transaction_response, txId = deploy("payari")
-    print('\033[91m'+'app_id: ' + '\033[92m', app_id)
-    print('\033[91m'+'transaction_response: ' +
-          '\033[92m', transaction_response)
-    print('\033[91m'+'transaction hash: ' + '\033[92m', txId)
+    app_id = 164520213
+    # app_id, transaction_response, txId = deploy("payari")
+    # print('\033[91m'+'app_id: ' + '\033[92m', app_id)
+    # print('\033[91m'+'transaction_response: ' +
+    #       '\033[92m', transaction_response)
+    # print('\033[91m'+'transaction hash: ' + '\033[92m', txId)
 
     # Teardown the deployed contract using clear function
     yield (app_id, algod_client)
 
-    # Teardown the contract by deleting it from the Algod client
-    print('\033[91m'+'Teardown')
-    account_info = algod_client.account_info(SENDER_ADDRESS)
-    print("SENDER_ADDRESS Account {} balance: {} microAlgos".format(
-        SENDER_ADDRESS, account_info.get('amount')) + "\n")
-    result = delete_application(app_id)
-    print('\033[91m'+'delete app result: ' + '\033[92m', result)
+    # # Teardown the contract by deleting it from the Algod client
+    # print('\033[91m'+'Teardown')
+    # account_info = algod_client.account_info(SENDER_ADDRESS)
+    # print("SENDER_ADDRESS Account {} balance: {} microAlgos".format(
+    #     SENDER_ADDRESS, account_info.get('amount')) + "\n")
+    # result = delete_application(app_id)
+    # print('\033[91m'+'delete app result: ' + '\033[92m', result)
 
 
 def print_logs(log):
